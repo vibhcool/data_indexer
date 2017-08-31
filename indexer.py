@@ -21,15 +21,33 @@ for page_no in range(0, page_count):
 # print(data)
 
 stop = set(stopwords.words("english"))
-
+imp = {}
+token=[]
 for num, value in data.items():
     word = nltk.word_tokenize(value)
     tag_word = nltk.tag.pos_tag(word)
-    token = [t.lower() for t, tag in tag_word if t not in stop if tag == 'NNP']
-    print(token)
-    wordfreq = nltk.FreqDist(token)
+    token.append([t.lower() for t, tag in tag_word if t not in stop if tag == 'NNP'])
+    #print(token[num])
+    wordfreq = nltk.FreqDist(token[num])
     #print(wordfreq.most_common(10))
-    imp = wordfreq.most_common(10)
+    imp[num+1] = [t for t,key in wordfreq.most_common(10)]
+
+req={}
+for key, value in imp.items():
+    for word in value:
+        if word in req:
+            continue
+        a=[key]
+        req[word]=a
+        for i in range(key,page_count):
+            if word in token[i]:
+                req[word].append(i+1)
+
+for word, num in req.items():
+    print(word+" : ", end=' ')
+    for i in num:
+        print(i,end=' ')
+    print()
 
 
 
